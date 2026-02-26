@@ -4,6 +4,9 @@
     "mocha": true,
     "node": true
   },
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "extends": "semistandard",
   "plugins": [
     "standard"

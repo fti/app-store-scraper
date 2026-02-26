@@ -14,13 +14,19 @@ const methods = {
   similar: require('./lib/similar'),
   reviews: require('./lib/reviews'),
   ratings: require('./lib/ratings'),
+  categories: require('./lib/categories'),
   versionHistory: require('./lib/version-history')
 };
 
 function memoized (opts) {
   const cacheOpts = Object.assign({
     primitive: true,
-    normalizer: JSON.stringify,
+    promise: true,
+    normalizer: (args) => {
+      const options = Object.assign({}, args[0]);
+      delete options.requestOptions;
+      return JSON.stringify(options);
+    },
     maxAge: 1000 * 60 * 5, // cache for 5 minutes
     max: 1000 // save up to 1k results to avoid memory issues
   }, opts);
