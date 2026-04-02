@@ -4,6 +4,7 @@ const assert = require('chai').assert;
 const assertValidApp = require('./common').assertValidApp;
 const assertValidUrl = require('./common').assertValidUrl;
 const store = require('../index');
+const common = require('../lib/common');
 
 describe('List method', () => {
   it('should fetch a valid application list for the given category and collection', () => {
@@ -81,5 +82,27 @@ describe('List method', () => {
         done();
       })
       .catch(done);
+  });
+
+  it('should preserve the requestOptions agent instance', () => {
+    const originalRequest = common.request;
+    const agent = { name: 'proxy-agent' };
+
+    common.request = function (url, headers, requestOptions) {
+      assert.strictEqual(requestOptions.agent, agent);
+      return Promise.resolve(JSON.stringify({
+        feed: {
+          entry: []
+        }
+      }));
+    };
+
+    return store.list({
+      requestOptions: {
+        agent
+      }
+    }).finally(() => {
+      common.request = originalRequest;
+    });
   });
 });
